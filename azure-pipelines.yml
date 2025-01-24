@@ -25,3 +25,16 @@ steps:
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
+- task: Docker@2
+  inputs:
+    containerRegistry: 'satya-docker-srvc-conn'
+    repository: 'satya-docker-conn-repository'
+    command: 'buildAndPush'
+- task: KubernetesManifest@1
+  inputs:
+    action: 'deploy'
+    connectionType: 'kubernetesServiceConnection'
+    kubernetesServiceConnection: 'satya-aks-service'
+    namespace: 'default'
+    manifests: '$(Build.SourcesDirectory)/deployment.yml'
+    Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
